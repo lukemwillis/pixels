@@ -5,6 +5,7 @@ import { State } from "./State";
 export class Nft {
   _name: string = "Pixel";
   _symbol: string = "PXL";
+  _quantity: number = 1000000;
 
   _contractId: Uint8Array;
   _state: State;
@@ -15,7 +16,7 @@ export class Nft {
   }
 
   _isTokenIdValid(tokenId: number) {
-    return 0 < tokenId && tokenId <= 1000000;
+    return 0 < tokenId && tokenId <= this._quantity;
   }
 
   _isColorValid(color: string) {
