@@ -1,0 +1,15 @@
+.Grid {
+  display: grid;
+  justify-content: stretch;
+  align-items: stretch;
+  grid-template-columns: repeat(100, 10px);
+  grid-template-rows: repeat(100, 10px);
+  background: url('../public/image.png') no-repeat;
+  font-size: 0;
+  image-rendering: pixelated;
+}
+
+.Wrap {
+  width: 100vw !important;
+  height: 100vh !important;
+}
