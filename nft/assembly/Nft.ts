@@ -14,6 +14,21 @@ export class Nft {
     this._state = new State(this._contractId);
   }
 
+  _isTokenIdValid(tokenId: number) {
+    return 0 < tokenId && tokenId <= 1000000;
+  }
+
+  _isColorValid(color: string) {
+    if (color.length !== 7) return false;
+    if (color.charAt(0) !== '#') return false;
+    
+    for (let i = 1; i < 7; i++) {
+      if (isNaN(parseInt(color.charAt(i), 16))) return false;
+    }
+
+    return true;
+  }
+
   name(args: nft.name_arguments): nft.name_result {
     return new nft.name_result(this._name);
   }
@@ -29,7 +44,7 @@ export class Nft {
     const token = this._state.GetToken(token_id);
 
     if (token) {
-      res.value = token.color as string;
+      res.value = token.color;
     }
 
     return res;
@@ -53,7 +68,7 @@ export class Nft {
     const token = this._state.GetToken(token_id);
 
     if (token) {
-      res.value = token.owner as Uint8Array;
+      res.value = token.owner;
     }
 
     return res;
@@ -77,8 +92,20 @@ export class Nft {
       return res;
     }
 
+    if (!this._isTokenIdValid(token_id)) {
+      System.log('token id is invalid');
+      return res;
+    }
+
     // assign the new token's owner and color
-    token = new nft.token_object(to, color);
+    token = new nft.token_object(to);
+    if (color !== null) {
+      if (this._isColorValid(color as string)) {
+        token.color = color;
+      } else {
+        System.log('ignoring invalid color input');
+      }
+    }
 
     // update the owner's balance
     const balance = this._state.GetBalance(to);
@@ -111,7 +138,13 @@ export class Nft {
       return res;
     }
 
-    // update token color
+    // check token color
+    if (color === null || !this._isColorValid(color as string)) {
+      System.log('color is invalid');
+      return res;
+    }
+
+    // paint
     token.color = color;
     this._state.SaveToken(token_id, token);
 
