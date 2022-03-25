@@ -20,8 +20,8 @@ export class Nft {
   }
 
   _isColorValid(color: string): bool {
-    if (color.length !== 7) return false;
-    if (color.charAt(0) !== '#') return false;
+    if (color.length != 7) return false;
+    if (color.charAt(0) != '#') return false;
     
     for (let i = 1; i < 7; i++) {
       if (isNaN(parseInt(color.charAt(i), 16))) return false;
@@ -100,7 +100,7 @@ export class Nft {
 
     // assign the new token's owner and color
     token = new nft.token_object(to);
-    if (color !== null) {
+    if (color != null) {
       if (this._isColorValid(color as string)) {
         token.color = color;
       } else {
@@ -140,7 +140,7 @@ export class Nft {
     }
 
     // check token color
-    if (color === null || !this._isColorValid(color as string)) {
+    if (color == null || !this._isColorValid(color as string)) {
       System.log('color is invalid');
       return res;
     }
