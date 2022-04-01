@@ -20,8 +20,24 @@ Koinos is the only free-to-use smart contract blockchain. You will pay zero gas 
 
 ## System Architecture
 
-Subject to change. The app will run as a smart contract on Koinos (see `contract` folder). The front end (see `app` folder) will be hosted in AWS S3/CloudFront and talk directly to the blockchain at a node I will host. That node will have a custom microservice (see `microservice` folder) that just listens for `"pixels.paint"` events emitted by the smart contract. That microservice will publish events to an AWS SNS topic (see `infrastructure` folder). There will be an API Gateway subscription to the topic which will push paint events to the front end via websocket. There will also be an AWS lambda subscription to the topic which will keep `latest-canvas.png` and `${block-number}-canvas.png` in sync in AWS S3.
-
-This infrastructure is not needed for the app to function directly with the blockchain but will aid in rendering the frontend performantly. Image data retrieved from S3 and paint events forwarded over websocket will be confirmed by querying the blockchain from the frontend.
+Subject to change. Explanation below.
 
 ![Pixels Architecture](./images/architecture.png)
+
+### Contract
+
+The app will run as a smart contract on Koinos (see `contract` folder). 
+ 
+### App
+
+The front end (see `app` folder) will be hosted in AWS S3/CloudFront and talk directly to the blockchain at a node I will host.
+
+### Microservice
+
+That node will have a custom microservice (see `microservice` folder) that just listens for `"pixels.paint"` events emitted by the smart contract. 
+
+### Infrastructure
+
+That microservice will publish events to an AWS SNS topic (see `infrastructure` folder). There will be an API Gateway subscription to the topic which will push paint events to the front end via websocket. There will also be an AWS lambda subscription to the topic which will keep `latest-canvas.png` and `${block-number}-canvas.png` in sync in AWS S3.
+
+This infrastructure is not needed for the app to function directly with the blockchain but will aid in rendering the frontend performantly. Image data retrieved from S3 and paint events forwarded over websocket will be confirmed by querying the blockchain directly from the frontend.
