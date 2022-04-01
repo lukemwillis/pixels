@@ -1,0 +1,13 @@
+{
+    "scripts": {
+        "install": "npm run install:contract && npm run install:app",
+        "install:contract": "cd contract && npm install && cd -",
+        "install:app": "cd app && npm install && cd -",
+        "build": "npm run build:contract && npm run build:app",
+        "build:contract": "cd contract && node cli.js build-all nft debug nft.proto && cd -",
+        "build:app": "cd app && npm run build && cd -",
+        "test": "npm run test:contract && npm run test:app",
+        "test:contract": "cd contract && node cli.js run-tests nft && cd -",
+        "test:app": "cd app && npm run test && cd -"
+    }
+}

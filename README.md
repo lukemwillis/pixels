@@ -1,70 +1,27 @@
-# Getting Started with Create React App
+# One Million Single-Pixel NFTs
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Pixels is a 1000x1000 shared canvas that anyone can paint. Each of the 1 million pixels is an NFT.
 
-## Available Scripts
+## Pixenomics
 
-In the project directory, you can run:
+When you paint a pixel, you take ownership of the NFT.
 
-### `npm start`
+First paint is free. Second is 0.01 [$KOIN](https://koinos.io). Each paint after that doubles the price.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+75% of the paint fee goes to the NFT owner. 25% goes to the contract owner (me). This means that if someone "steals" your pixels, you make 50% ROI.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+When no pixels have been painted for 7 days, they will lock and be unpaintable. A single 1000x1000 NFT of the full canvas will be minted and auctioned. The profits from that auction will be split between pixel holders.
 
-### `npm test`
+## Running on Koinos
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+This design would be ridiculously expensive on Ethereum. Even on cheaper L1s/L2, the gas price of these transactions would rise rather quickly. It would be difficult to get traction in the early stage as someone would have to pay a lot just in gas to participate even if it was free to paint/mint the first time.
 
-### `npm run build`
+Koinos is the only free-to-use smart contract blockchain. You will pay zero gas for these transactions. What you will pay instead is called mana. Mana is a property of KOIN. Every 1 KOIN has 1 mana. You can spend mana and it will recharge. While your mana is recharging, an equivalent amount of KOIN is locked (non-transferrable). So, if it costs 0.05 mana to do a paint, then 0.05 of your KOIN will be locked while that mana recharges (a little every block).
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## System Architecture
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Subject to change. The app will run as a smart contract on Koinos (see `contract` folder). The front end (see `app` folder) will be hosted in AWS S3/CloudFront and talk directly to the blockchain at a node I will host. That node will have a custom microservice (see `microservice` folder) that just listens for `"pixels.paint"` events emitted by the smart contract. That microservice will publish events to an AWS SNS topic (see `infrastructure` folder). There will be an API Gateway subscription to the topic which will push paint events to the front end via websocket. There will also be an AWS lambda subscription to the topic which will keep `latest-canvas.png` and `${block-number}-canvas.png` in sync in AWS S3.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+This infrastructure is not needed for the app to function directly with the blockchain but will aid in rendering the frontend performantly. Image data retrieved from S3 and paint events forwarded over websocket will be confirmed by querying the blockchain from the frontend.
 
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+![Pixels Architecture](./images/architecture.png)
